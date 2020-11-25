@@ -5,10 +5,7 @@ struct EmojiArtDocumentView: View {
     @State private var chosenPalette: String = ""
     @State private var isPastingExplanationPresented: Bool = false
     @State private var isConfirmationAlertPresented: Bool = false
-    let userdef = UserDefaults.standard
     //@State private var timeInDocument: Date = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    @State var calendar = Calendar.current
 
     init(document: EmojiArtDocument) {
         self.document = document
@@ -18,17 +15,7 @@ struct EmojiArtDocumentView: View {
 
     var body: some View {
         VStack {
-            HStack{
-                Spacer()
-                Text("\(calendar.component(.hour, from: document.timeInDocument)):\(calendar.component(.minute, from: document.timeInDocument)):\(calendar.component(.second, from: document.timeInDocument))")
-                            .onReceive(timer) { input in
-                                document.timeInDocument += 1
-                                userdef.setValue(calendar.component(.hour, from: document.timeInDocument), forKey: "hour"+document.id.uuidString)
-                                userdef.setValue(calendar.component(.minute, from: document.timeInDocument), forKey: "minute"+document.id.uuidString)
-                                userdef.setValue(calendar.component(.second, from: document.timeInDocument), forKey: "second"+document.id.uuidString)
-                                print(calendar.component(.second, from: document.timeInDocument))
-                            }
-            }
+            TimerView(document: document)
             HStack {
                 PaletteChooser(document: document, chosenPalette: $chosenPalette)
                 ScrollView(.horizontal) {
