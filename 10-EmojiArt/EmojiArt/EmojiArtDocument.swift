@@ -14,12 +14,15 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
     static let palette: String =  "🐶🐱🐹🐰🦊🐼🐨🐯🐸🐵🐧🐦🐤🦆🦅🦇🐺"
 
     @Published private var emojiArt: EmojiArt
+    @Published var timeInDocument: Date
     private var emojiArtCancellable: AnyCancellable?
+    let userdef = UserDefaults.standard
     
     init(id: UUID = UUID()) {
         self.id = id
         let defaultsKey = "EmojiArtDocument.\(id.uuidString)"
         emojiArt = EmojiArt(json: UserDefaults.standard.data(forKey: defaultsKey)) ?? EmojiArt()
+        timeInDocument = Calendar.current.date(bySettingHour: userdef.integer(forKey: "hour"+self.id.uuidString), minute: userdef.integer(forKey: "minute"+self.id.uuidString), second: userdef.integer(forKey: "second"+self.id.uuidString), of: Date())!
         emojiArtCancellable = $emojiArt.sink { emojiArt in
             print("json = \(emojiArt.json?.utf8 ?? "nil")")
             UserDefaults.standard.set(emojiArt.json, forKey: defaultsKey)
