@@ -13,23 +13,20 @@ struct EmojiArtDocumentChooser: View {
             if(gridMode){
                 GeometryReader { geometry in
                 Grid(store.documents) { document in
-                    GeometryReader { geometry in
-                    ZStack {
-                        Color.white.overlay(
-                            OptionalImage(uiImage: document.backgroundImage)
-                                .scaleEffect(document.steadyStateZoomScale * gestureZoomScale)
-                                .offset((document.steadyStatePanOffset + gesturePanOffset) * (document.steadyStateZoomScale * gestureZoomScale))
-                        )
-                        //if self.isLoading {
-                        //    Image(systemName: "arrow.clockwise.circle.fill").imageScale(.large).spinning()
-                        //} else {
-                            ForEach(document.emojis) { emoji in
-                                Text(emoji.text)
-                                    .font(animatableWithSize: emoji.fontSize * document.steadyStateZoomScale * gestureZoomScale)
-                                    .position(self.position(for: emoji, in: geometry.size, document: document))
-                          //  }
+                    GeometryReader { geometry_ in
+                            ZStack {
+                                Color.white.overlay(
+                                    OptionalImage(uiImage: document.backgroundImage)
+                                        .scaleEffect(document.steadyStateZoomScale * gestureZoomScale)
+                                        .offset((document.steadyStatePanOffset + gesturePanOffset) * (document.steadyStateZoomScale * gestureZoomScale))
+                                )
+                                
+                                    ForEach(document.emojis) { emoji in
+                                        Text(emoji.text)
+                                            .font(animatableWithSize: emoji.fontSize * document.steadyStateZoomScale * gestureZoomScale)
+                                            .position(self.position(for: emoji, in: geometry.size, document: document))
+                                }
                         }
-                }
                     }
                 }
                 .navigationBarTitle(self.store.name)
