@@ -30,10 +30,11 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
             userdef.set(1, forKey: "colorG"+self.id.uuidString)
             userdef.set(1, forKey: "colorB"+self.id.uuidString)
         }
-        color = Color(red: userdef.double(forKey: "colorR"+self.id.uuidString), green: userdef.double(forKey: "colorG"+self.id.uuidString), blue: userdef.double(forKey: "colorB"+self.id.uuidString))
         if userdef.object(forKey: "colorAlpha"+self.id.uuidString)==nil {
             userdef.set(1.0, forKey: "colorAlpha"+self.id.uuidString)
         }
+        color = Color(red: userdef.double(forKey: "colorR"+self.id.uuidString), green: userdef.double(forKey: "colorG"+self.id.uuidString), blue: userdef.double(forKey: "colorB"+self.id.uuidString))
+                      //, opacity: userdef.double(forKey: "colorAlpha"+self.id.uuidString))
         alpha = userdef.double(forKey: "colorAlpha"+self.id.uuidString)
         
         emojiArtCancellable = $emojiArt.sink { emojiArt in

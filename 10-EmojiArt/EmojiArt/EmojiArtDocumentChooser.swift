@@ -11,9 +11,8 @@ struct EmojiArtDocumentChooser: View {
         return NavigationView {
             
             if(gridMode){
-                GeometryReader { geometry in
                 Grid(store.documents) { document in
-                    GeometryReader { geometry_ in
+                    GeometryReader { geometry in
                             ZStack {
                                 Color.white.overlay(
                                     OptionalImage(uiImage: document.backgroundImage)
@@ -41,17 +40,12 @@ struct EmojiArtDocumentChooser: View {
                         Button(action: {
                             gridMode = !gridMode
                         }, label: {
-                            if(gridMode){
-                                Image(systemName: "square.grid.2x2.fill").imageScale(.large)
-                            }
-                            else{
-                                Image(systemName: "square.grid.2x2").imageScale(.large)
-                            }
+
+                            Image(systemName: "square.grid.2x2.fill").imageScale(.large)
+                            
                     })},
                     trailing: EditButton()
-                )
-            }
-                
+                )                
             }
             else{
             List {
@@ -84,12 +78,9 @@ struct EmojiArtDocumentChooser: View {
                     Button(action: {
                         gridMode = !gridMode
                     }, label: {
-                        if(gridMode){
-                            Image(systemName: "square.grid.2x2.fill").imageScale(.large)
-                        }
-                        else{
+                        
                             Image(systemName: "square.grid.2x2").imageScale(.large)
-                        }
+                        
                 })},
                 trailing: EditButton()
             )
