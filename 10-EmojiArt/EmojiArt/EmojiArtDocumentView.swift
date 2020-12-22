@@ -12,12 +12,21 @@ struct EmojiArtDocumentView: View {
     init(document: EmojiArtDocument) {
         self.document = document
         self.chosenPalette = document.defaultPalette
+        self.chosenAlpha = document.alpha
         self.chosenColor = document.color
-    }
+        
+        print(document.color)
+        print(self.chosenColor)
+        print(document.alpha)
+        print(self.chosenAlpha)
+        
+        }
 
     var body: some View {
         VStack {
             TimerView(document: document)
+            //Text(chosenAlpha.description)
+            //Text(chosenColor.description)
             HStack {
                 PaletteChooser(document: document, chosenPalette: $chosenPalette)
                 ScrollView(.horizontal) {
@@ -33,18 +42,22 @@ struct EmojiArtDocumentView: View {
             }
             GeometryReader { geometry in
                 ZStack {
-                    chosenColor.opacity(Double(chosenAlpha)).overlay(
+                    chosenColor.opacity(chosenAlpha).overlay(
                         OptionalImage(uiImage: self.document.backgroundImage)
                             .scaleEffect(self.zoomScale)
                             .offset(self.panOffset)
                     )
-                        .gesture(self.doubleTapToZoom(in: geometry.size))
-                    .onChange(of: chosenColor, perform: { value in
-                        document.changeColor(value)
+                    .gesture(self.doubleTapToZoom(in: geometry.size))
+                    .onChange(of: self.chosenAlpha, perform: { value in
+                        print("changing alpha")
+                        self.document.changeAlpha(value)
                     })
-                    .onChange(of: chosenAlpha, perform: { value in
-                        //document.changeAlpha()
+                    .onChange(of: self.chosenColor, perform: { value in
+                        print("changing color")
+                        print(value)
+                        self.document.changeColor(value)
                     })
+                    
                     if self.isLoading {
                         Image(systemName: "arrow.clockwise.circle.fill").imageScale(.large).spinning()
                     } else {

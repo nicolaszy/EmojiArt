@@ -16,6 +16,7 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
     @Published private var emojiArt: EmojiArt
     @Published var timeInDocument: Date
     @Published var color: Color
+    @Published var alpha: Double
     private var emojiArtCancellable: AnyCancellable?
     let userdef = UserDefaults.standard
     
@@ -30,6 +31,11 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
             userdef.set(1, forKey: "colorB"+self.id.uuidString)
         }
         color = Color(red: userdef.double(forKey: "colorR"+self.id.uuidString), green: userdef.double(forKey: "colorG"+self.id.uuidString), blue: userdef.double(forKey: "colorB"+self.id.uuidString))
+        if userdef.object(forKey: "colorAlpha"+self.id.uuidString)==nil {
+            userdef.set(1.0, forKey: "colorAlpha"+self.id.uuidString)
+        }
+        alpha = userdef.double(forKey: "colorAlpha"+self.id.uuidString)
+        
         emojiArtCancellable = $emojiArt.sink { emojiArt in
             print("json = \(emojiArt.json?.utf8 ?? "nil")")
             UserDefaults.standard.set(emojiArt.json, forKey: defaultsKey)
@@ -58,6 +64,10 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
                     userdef.set(g, forKey: "colorG"+self.id.uuidString)
                     userdef.set(b, forKey: "colorB"+self.id.uuidString)
                 }
+    }
+    func changeAlpha(_ a: Double){
+        alpha = a
+        userdef.set(alpha, forKey: "colorAlpha"+self.id.uuidString)
     }
     
     func addEmoji(_ emoji: String, at location: CGPoint, size: CGFloat) {
