@@ -15,6 +15,7 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
 
     @Published private var emojiArt: EmojiArt
     @Published var timeInDocument: Date
+    @Published var color: Color
     private var emojiArtCancellable: AnyCancellable?
     let userdef = UserDefaults.standard
     
@@ -23,6 +24,7 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
         let defaultsKey = "EmojiArtDocument.\(id.uuidString)"
         emojiArt = EmojiArt(json: UserDefaults.standard.data(forKey: defaultsKey)) ?? EmojiArt()
         timeInDocument = Calendar.current.date(bySettingHour: userdef.integer(forKey: "hour"+self.id.uuidString), minute: userdef.integer(forKey: "minute"+self.id.uuidString), second: userdef.integer(forKey: "second"+self.id.uuidString), of: Date())!
+        color = Color.white
         emojiArtCancellable = $emojiArt.sink { emojiArt in
             print("json = \(emojiArt.json?.utf8 ?? "nil")")
             UserDefaults.standard.set(emojiArt.json, forKey: defaultsKey)
@@ -37,6 +39,10 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
     var emojis: [EmojiArt.Emoji] {emojiArt.emojis}
     
     // MARK: - Intents
+    func changeColor(_ c: Color){
+        color = c
+    }
+    
     func addEmoji(_ emoji: String, at location: CGPoint, size: CGFloat) {
         emojiArt.addEmoji(emoji, x: Int(location.x), y: Int(location.y), size: Int(size))
     }

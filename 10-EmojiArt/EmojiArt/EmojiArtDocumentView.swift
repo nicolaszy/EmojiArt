@@ -3,14 +3,16 @@ import SwiftUI
 struct EmojiArtDocumentView: View {
     @ObservedObject var document: EmojiArtDocument
     @State private var chosenPalette: String = ""
+    @State private var chosenColor: Color = Color.white
+    @State private var chosenAlpha: Float = 1
     @State private var isPastingExplanationPresented: Bool = false
     @State private var isConfirmationAlertPresented: Bool = false
     //@State private var timeInDocument: Date = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
 
     init(document: EmojiArtDocument) {
         self.document = document
-        chosenPalette = document.defaultPalette
-        
+        self.chosenPalette = document.defaultPalette
+        self.chosenColor = document.color
     }
 
     var body: some View {
@@ -27,10 +29,11 @@ struct EmojiArtDocumentView: View {
                         }
                     }
                 }
+                ColorChooser(document: document, chosenColor: $chosenColor, chosenAlpha: $chosenAlpha)
             }
             GeometryReader { geometry in
                 ZStack {
-                    Color.white.overlay(
+                    chosenColor.opacity(Double(chosenAlpha)).overlay(
                         OptionalImage(uiImage: self.document.backgroundImage)
                             .scaleEffect(self.zoomScale)
                             .offset(self.panOffset)
