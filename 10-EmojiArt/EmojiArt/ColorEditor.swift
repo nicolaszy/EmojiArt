@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ColorEditor: View {
     @Binding var chosenColor: Color
-    @Binding var chosenAlpha: Float
+    @Binding var chosenAlpha: Double
     @ObservedObject var document: EmojiArtDocument
     @Binding var isPresented: Bool
     var body: some View {

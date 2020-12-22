@@ -4,7 +4,7 @@ struct EmojiArtDocumentView: View {
     @ObservedObject var document: EmojiArtDocument
     @State private var chosenPalette: String = ""
     @State private var chosenColor: Color = Color.white
-    @State private var chosenAlpha: Float = 1
+    @State private var chosenAlpha: Double = 1.0
     @State private var isPastingExplanationPresented: Bool = false
     @State private var isConfirmationAlertPresented: Bool = false
     //@State private var timeInDocument: Date = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
@@ -39,6 +39,12 @@ struct EmojiArtDocumentView: View {
                             .offset(self.panOffset)
                     )
                         .gesture(self.doubleTapToZoom(in: geometry.size))
+                    .onChange(of: chosenColor, perform: { value in
+                        document.changeColor(value)
+                    })
+                    .onChange(of: chosenAlpha, perform: { value in
+                        //document.changeAlpha()
+                    })
                     if self.isLoading {
                         Image(systemName: "arrow.clockwise.circle.fill").imageScale(.large).spinning()
                     } else {

@@ -24,7 +24,12 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
         let defaultsKey = "EmojiArtDocument.\(id.uuidString)"
         emojiArt = EmojiArt(json: UserDefaults.standard.data(forKey: defaultsKey)) ?? EmojiArt()
         timeInDocument = Calendar.current.date(bySettingHour: userdef.integer(forKey: "hour"+self.id.uuidString), minute: userdef.integer(forKey: "minute"+self.id.uuidString), second: userdef.integer(forKey: "second"+self.id.uuidString), of: Date())!
-        color = Color.white
+        if userdef.object(forKey: "colorR"+self.id.uuidString)==nil {
+            userdef.set(1, forKey: "colorR"+self.id.uuidString)
+            userdef.set(1, forKey: "colorG"+self.id.uuidString)
+            userdef.set(1, forKey: "colorB"+self.id.uuidString)
+        }
+        color = Color(red: userdef.double(forKey: "colorR"+self.id.uuidString), green: userdef.double(forKey: "colorG"+self.id.uuidString), blue: userdef.double(forKey: "colorB"+self.id.uuidString))
         emojiArtCancellable = $emojiArt.sink { emojiArt in
             print("json = \(emojiArt.json?.utf8 ?? "nil")")
             UserDefaults.standard.set(emojiArt.json, forKey: defaultsKey)
@@ -41,6 +46,18 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
     // MARK: - Intents
     func changeColor(_ c: Color){
         color = c
+        let colorString = "\(color)"
+                let colorArray: [String] = colorString.components(separatedBy: " ")
+
+                if colorArray.count > 1 {
+                    let r: Double = Double((Double(colorArray[1]) ?? 1))
+                    let g: Double = Double((Double(colorArray[2]) ?? 1))
+                    let b: Double = Double((Double(colorArray[3]) ?? 1))
+                    //let alpha: CGFloat = CGFloat((Float(colorArray[4]) ?? 1))
+                    userdef.set(r, forKey: "colorR"+self.id.uuidString)
+                    userdef.set(g, forKey: "colorG"+self.id.uuidString)
+                    userdef.set(b, forKey: "colorB"+self.id.uuidString)
+                }
     }
     
     func addEmoji(_ emoji: String, at location: CGPoint, size: CGFloat) {
