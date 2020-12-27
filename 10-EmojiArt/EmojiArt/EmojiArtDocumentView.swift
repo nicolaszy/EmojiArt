@@ -12,8 +12,8 @@ struct EmojiArtDocumentView: View {
     init(document: EmojiArtDocument) {
         self.document = document
         self.chosenPalette = document.defaultPalette
-        self.chosenAlpha = document.alpha
-        self.chosenColor = document.color
+        //self.chosenAlpha = document.alpha
+        //self.chosenColor = document.color
         
         print(document.color)
         print(self.chosenColor)
@@ -67,6 +67,9 @@ struct EmojiArtDocumentView: View {
                                 .position(self.position(for: emoji, in: geometry.size))
                         }
                     }
+                }.onAppear{
+                    self.chosenAlpha = document.alpha
+                    self.chosenColor = document.color
                 }
                 .clipped()
                 .gesture(self.panGesture())

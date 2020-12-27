@@ -45,7 +45,7 @@ struct EmojiArtDocumentChooser: View {
                             
                     })},
                     trailing: EditButton()
-                )                
+                )
             }
             else{
             List {
@@ -98,6 +98,6 @@ struct EmojiArtDocumentChooser: View {
         location = CGPoint(x: location.x + panOffset.width, y: location.y + panOffset.height)
         return location
     }
-    @GestureState private var gestureZoomScale: CGFloat = 1.0
+    @GestureState private var gestureZoomScale: CGFloat = 0.50 //TODO: set right value
     @GestureState private var gesturePanOffset: CGSize = .zero
 }
