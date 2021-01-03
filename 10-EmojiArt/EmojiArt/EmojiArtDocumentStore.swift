@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import CoreData
 
 class EmojiArtDocumentStore: ObservableObject {
     private static let persistenceKeyPrefix = "EmojiArtDocumentStore"

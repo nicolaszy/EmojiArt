@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import CoreData
 
 class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
     static func == (lhs: EmojiArtDocument, rhs: EmojiArtDocument) -> Bool {
@@ -21,6 +22,28 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
     let userdef = UserDefaults.standard
     
     init(id: UUID = UUID()) {
+        
+        //Core Data Test -> seems to be working so far
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        do{
+            var items = try context.fetch(EmojiArtDocument_.fetchRequest())
+            print("number of items found: "+String(items.count))
+            let newEmojiArtDocument = EmojiArtDocument_(context: context)
+            newEmojiArtDocument.alpha = 1
+            newEmojiArtDocument.colorR = 2
+            newEmojiArtDocument.colorG = 2
+            newEmojiArtDocument.colorB = 2
+
+            //save data
+            do{try context.save()}
+            catch{
+                print("failed to save")
+            }
+        }
+        catch{
+            print("error!!!")
+        }
+        
         self.id = id
         let defaultsKey = "EmojiArtDocument.\(id.uuidString)"
         emojiArt = EmojiArt(json: UserDefaults.standard.data(forKey: defaultsKey)) ?? EmojiArt()
