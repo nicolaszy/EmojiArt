@@ -13,6 +13,7 @@ struct EmojiArtDocumentChooser: View {
             if(gridMode){
                 Grid(store.documents) { document in
                     GeometryReader { geometry in
+                        NavigationLink(destination: EmojiArtDocumentView(document: document)){
                             ZStack {
                                 Color.white.overlay(
                                     OptionalImage(uiImage: document.backgroundImage)
@@ -25,6 +26,7 @@ struct EmojiArtDocumentChooser: View {
                                             .font(animatableWithSize: emoji.fontSize * document.steadyStateZoomScale * gestureZoomScale)
                                             .position(self.position(for: emoji, in: geometry.size, document: document))
                                 }
+                        }
                         }
                     }
                 }
