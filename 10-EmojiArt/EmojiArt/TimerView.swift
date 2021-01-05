@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct TimerView: View {
     @ObservedObject var document: EmojiArtDocument
@@ -20,10 +21,28 @@ struct TimerView: View {
             Text("\(calendar.component(.hour, from: document.timeInDocument)):\(calendar.component(.minute, from: document.timeInDocument)):\(calendar.component(.second, from: document.timeInDocument))")
                         .onReceive(timer) { input in
                             document.timeInDocument += 1
-                            userdef.setValue(calendar.component(.hour, from: document.timeInDocument), forKey: "hour"+document.id.uuidString)
-                            userdef.setValue(calendar.component(.minute, from: document.timeInDocument), forKey: "minute"+document.id.uuidString)
-                            userdef.setValue(calendar.component(.second, from: document.timeInDocument), forKey: "second"+document.id.uuidString)
-                            print(calendar.component(.second, from: document.timeInDocument))
+                            
+                            let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+                            do{
+                                let fetchRequest : NSFetchRequest<EmojiArtDocument_> = EmojiArtDocument_.fetchRequest()
+                                fetchRequest.predicate = NSPredicate(format: "id == %@", document.id.uuidString)
+                                let items = try context.fetch(EmojiArtDocument_.fetchRequest()) as! [EmojiArtDocument_]
+                                                        
+                                if let currentItem = items.first{
+                                    currentItem.timeInDocument = document.timeInDocument
+                                }
+
+                                //save data
+                                do{try context.save()}
+                                catch{
+                                    print("failed to save")
+                                }
+                            }
+                            catch{
+                                print("error!!!")
+                            }
+                            
+                            
                         }
         }
     }

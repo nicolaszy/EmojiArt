@@ -16,12 +16,13 @@
         <attribute name="colorB" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="colorG" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="colorR" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="timeInDocument" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="emojiArt" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EmojiArt_"/>
     </entity>
     <elements>
-        <element name="EmojiArtDocument_" positionX="-107.5245361328125" positionY="-112.0064849853516" width="128" height="133"/>
-        <element name="EmojiArt_" positionX="-100.0381469726562" positionY="104.1591339111328" width="128" height="73"/>
         <element name="Emoji_" positionX="-99.0328369140625" positionY="227.6521606445312" width="128" height="118"/>
+        <element name="EmojiArt_" positionX="-100.0381469726562" positionY="104.1591339111328" width="128" height="73"/>
+        <element name="EmojiArtDocument_" positionX="-107.5245361328125" positionY="-112.0064849853516" width="128" height="134"/>
     </elements>
 </model>

@@ -23,48 +23,70 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
     
     init(id: UUID = UUID()) {
         
-        //Core Data Test -> seems to be working so far
+        //Core Data Test -> seems to be working so far; TODO: save the data that needs to actually be saved! 
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         do{
-            var items = try context.fetch(EmojiArtDocument_.fetchRequest())
+            let fetchRequest : NSFetchRequest<EmojiArtDocument_> = EmojiArtDocument_.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "id == %@", id.uuidString)
+            var items = try context.fetch(EmojiArtDocument_.fetchRequest()) as! [EmojiArtDocument_]
+            
             print("number of items found: "+String(items.count))
-            let newEmojiArtDocument = EmojiArtDocument_(context: context)
-            newEmojiArtDocument.alpha = 1
-            newEmojiArtDocument.colorR = 2
-            newEmojiArtDocument.colorG = 2
-            newEmojiArtDocument.colorB = 2
-
-            //save data
-            do{try context.save()}
-            catch{
-                print("failed to save")
+                if items.count==0 {
+                let newEmojiArtDocument = EmojiArtDocument_(context: context)
+                newEmojiArtDocument.alpha = 1
+                newEmojiArtDocument.colorR = 1
+                newEmojiArtDocument.colorG = 1
+                newEmojiArtDocument.colorB = 1
+                newEmojiArtDocument.timeInDocument =  Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
+                newEmojiArtDocument.id = id.uuidString
+                    
+                //save data
+                do{try context.save()}
+                catch{
+                    print("failed to save")
+                }
             }
+            items = try context.fetch(EmojiArtDocument_.fetchRequest()) as! [EmojiArtDocument_]
+            
+            let item = items.first ?? EmojiArtDocument_(context: context)
+            
+            self.id = id
+            self.alpha = item.alpha
+            self.color = Color(red: item.colorR, green: item.colorG, blue: item.colorB)
+            self.timeInDocument = item.timeInDocument ?? Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
+                    
+            let defaultsKey = "EmojiArtDocument.\(id.uuidString)"
+            emojiArt = EmojiArt(json: UserDefaults.standard.data(forKey: defaultsKey)) ?? EmojiArt()
+                
+            emojiArtCancellable = $emojiArt.sink { emojiArt in
+                    print("json = \(emojiArt.json?.utf8 ?? "nil")")
+                    UserDefaults.standard.set(emojiArt.json, forKey: defaultsKey)
+            }
+            fetchBackgroundImageData()
+            
+            
         }
         catch{
+            
             print("error!!!")
+            self.id = id
+            self.alpha = 1
+            self.color = Color(red: 1, green: 1, blue: 1)
+            self.timeInDocument = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
+                    
+            let defaultsKey = "EmojiArtDocument.\(id.uuidString)"
+            emojiArt = EmojiArt(json: UserDefaults.standard.data(forKey: defaultsKey)) ?? EmojiArt()
+                
+            emojiArtCancellable = $emojiArt.sink { emojiArt in
+                    print("json = \(emojiArt.json?.utf8 ?? "nil")")
+                    UserDefaults.standard.set(emojiArt.json, forKey: defaultsKey)
+            }
+            fetchBackgroundImageData()
+            
         }
         
-        self.id = id
-        let defaultsKey = "EmojiArtDocument.\(id.uuidString)"
-        emojiArt = EmojiArt(json: UserDefaults.standard.data(forKey: defaultsKey)) ?? EmojiArt()
-        timeInDocument = Calendar.current.date(bySettingHour: userdef.integer(forKey: "hour"+self.id.uuidString), minute: userdef.integer(forKey: "minute"+self.id.uuidString), second: userdef.integer(forKey: "second"+self.id.uuidString), of: Date())!
-        if userdef.object(forKey: "colorR"+self.id.uuidString)==nil {
-            userdef.set(1, forKey: "colorR"+self.id.uuidString)
-            userdef.set(1, forKey: "colorG"+self.id.uuidString)
-            userdef.set(1, forKey: "colorB"+self.id.uuidString)
-        }
-        if userdef.object(forKey: "colorAlpha"+self.id.uuidString)==nil {
-            userdef.set(1.0, forKey: "colorAlpha"+self.id.uuidString)
-        }
-        color = Color(red: userdef.double(forKey: "colorR"+self.id.uuidString), green: userdef.double(forKey: "colorG"+self.id.uuidString), blue: userdef.double(forKey: "colorB"+self.id.uuidString))
-                      //, opacity: userdef.double(forKey: "colorAlpha"+self.id.uuidString))
-        alpha = userdef.double(forKey: "colorAlpha"+self.id.uuidString)
+        //self.id = id
         
-        emojiArtCancellable = $emojiArt.sink { emojiArt in
-            print("json = \(emojiArt.json?.utf8 ?? "nil")")
-            UserDefaults.standard.set(emojiArt.json, forKey: defaultsKey)
-        }
-        fetchBackgroundImageData()
     }
     
     @Published private(set) var backgroundImage: UIImage?
@@ -84,14 +106,55 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
                     let g: Double = Double((Double(colorArray[2]) ?? 1))
                     let b: Double = Double((Double(colorArray[3]) ?? 1))
                     //let alpha: CGFloat = CGFloat((Float(colorArray[4]) ?? 1))
-                    userdef.set(r, forKey: "colorR"+self.id.uuidString)
-                    userdef.set(g, forKey: "colorG"+self.id.uuidString)
-                    userdef.set(b, forKey: "colorB"+self.id.uuidString)
+                    
+                    //save data with core data
+                    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+                    do{
+                        let fetchRequest : NSFetchRequest<EmojiArtDocument_> = EmojiArtDocument_.fetchRequest()
+                        fetchRequest.predicate = NSPredicate(format: "id == %@", self.id.uuidString)
+                        let items = try context.fetch(EmojiArtDocument_.fetchRequest()) as! [EmojiArtDocument_]
+                                                
+                        if let currentItem = items.first{
+                            currentItem.colorR = r
+                            currentItem.colorG = g
+                            currentItem.colorB = b
+                        }
+
+                        //save data
+                        do{try context.save()}
+                        catch{
+                            print("failed to save")
+                        }
+                    }
+                    catch{
+                        print("error!!!")
+                    }
+                    
                 }
     }
     func changeAlpha(_ a: Double){
         alpha = a
-        userdef.set(alpha, forKey: "colorAlpha"+self.id.uuidString)
+        
+        //save data with core data
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        do{
+            let fetchRequest : NSFetchRequest<EmojiArtDocument_> = EmojiArtDocument_.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "id == %@", self.id.uuidString)
+            let items = try context.fetch(EmojiArtDocument_.fetchRequest()) as! [EmojiArtDocument_]
+                                    
+            if let currentItem = items.first{
+                currentItem.alpha = a
+            }
+
+            //save data
+            do{try context.save()}
+            catch{
+                print("failed to save")
+            }
+        }
+        catch{
+            print("error!!!")
+        }
     }
     
     func addEmoji(_ emoji: String, at location: CGPoint, size: CGFloat) {
