@@ -26,7 +26,7 @@ struct TimerView: View {
                             do{
                                 let fetchRequest : NSFetchRequest<EmojiArtDocument_> = EmojiArtDocument_.fetchRequest()
                                 fetchRequest.predicate = NSPredicate(format: "id == %@", document.id.uuidString)
-                                let items = try context.fetch(EmojiArtDocument_.fetchRequest()) as! [EmojiArtDocument_]
+                                let items = try context.fetch(fetchRequest)
                                                         
                                 if let currentItem = items.first{
                                     currentItem.timeInDocument = document.timeInDocument

@@ -28,7 +28,7 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
         do{
             let fetchRequest : NSFetchRequest<EmojiArtDocument_> = EmojiArtDocument_.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "id == %@", id.uuidString)
-            var items = try context.fetch(EmojiArtDocument_.fetchRequest()) as! [EmojiArtDocument_]
+            var items = try context.fetch(fetchRequest)
             
             print("number of items found: "+String(items.count))
                 if items.count==0 {
@@ -46,7 +46,7 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
                     print("failed to save")
                 }
             }
-            items = try context.fetch(EmojiArtDocument_.fetchRequest()) as! [EmojiArtDocument_]
+            items = try context.fetch(fetchRequest)
             
             let item = items.first ?? EmojiArtDocument_(context: context)
             
@@ -112,7 +112,7 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
                     do{
                         let fetchRequest : NSFetchRequest<EmojiArtDocument_> = EmojiArtDocument_.fetchRequest()
                         fetchRequest.predicate = NSPredicate(format: "id == %@", self.id.uuidString)
-                        let items = try context.fetch(EmojiArtDocument_.fetchRequest()) as! [EmojiArtDocument_]
+                        let items = try context.fetch(fetchRequest)
                                                 
                         if let currentItem = items.first{
                             currentItem.colorR = r
@@ -140,7 +140,7 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
         do{
             let fetchRequest : NSFetchRequest<EmojiArtDocument_> = EmojiArtDocument_.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "id == %@", self.id.uuidString)
-            let items = try context.fetch(EmojiArtDocument_.fetchRequest()) as! [EmojiArtDocument_]
+            let items = try context.fetch(fetchRequest) 
                                     
             if let currentItem = items.first{
                 currentItem.alpha = a
