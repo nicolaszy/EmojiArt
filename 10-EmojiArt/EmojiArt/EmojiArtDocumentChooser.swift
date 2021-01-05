@@ -15,7 +15,7 @@ struct EmojiArtDocumentChooser: View {
                     GeometryReader { geometry in
                         NavigationLink(destination: EmojiArtDocumentView(document: document)){
                             ZStack {
-                                document.color.overlay(
+                                document.color.opacity(document.alpha).overlay(
                                     OptionalImage(uiImage: document.backgroundImage)
                                         .scaleEffect(document.steadyStateZoomScale * gestureZoomScale)
                                         .offset((document.steadyStatePanOffset + gesturePanOffset) * (document.steadyStateZoomScale * gestureZoomScale))
