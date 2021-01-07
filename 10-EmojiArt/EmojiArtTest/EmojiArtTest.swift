@@ -29,11 +29,17 @@ class EmojiArtTest: XCTestCase {
     func testAddEmoji_whenTextSizeGreaterThan1_doesNothing() throws{
         let emojiArtDocument = Emoji_Art.EmojiArtDocument.init()
         //check if app crashes. it should just do nothing
-        emojiArtDocument.addEmoji("", at: CGPoint(x: 10, y: 10), size: 1000)
+        emojiArtDocument.addEmoji("😊", at: CGPoint(x: 10, y: 10), size: 1000)
     }
     
     func testAddEmoji_whenInputValid_incrementsEmojiId() throws{
-        //TODO 
+        //TODO
+        let emojiArtDocument = Emoji_Art.EmojiArtDocument.init()
+        emojiArtDocument.addEmoji("😊", at: CGPoint(x: 10, y: 10), size: 1000)
+        let prevId = emojiArtDocument.emojis.first(where: { $0.text=="😊" })?.id
+        emojiArtDocument.addEmoji("😄", at: CGPoint(x: 10, y: 10), size: 1000)
+        let thisId = emojiArtDocument.emojis.first(where: { $0.text=="😄" })?.id
+        assert(prevId!+1==thisId!)
     }
 
     func testExample() throws {
