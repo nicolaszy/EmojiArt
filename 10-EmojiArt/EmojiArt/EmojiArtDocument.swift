@@ -19,7 +19,6 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
     @Published var color: Color
     @Published var alpha: Double
     private var emojiArtCancellable: AnyCancellable?
-    let userdef = UserDefaults.standard
     
     init(id: UUID = UUID()) {
         
@@ -54,14 +53,29 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
             self.alpha = item.alpha
             self.color = Color(red: item.colorR, green: item.colorG, blue: item.colorB)
             self.timeInDocument = item.timeInDocument ?? Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
-                    
-            let defaultsKey = "EmojiArtDocument.\(id.uuidString)"
-            emojiArt = EmojiArt(json: UserDefaults.standard.data(forKey: defaultsKey)) ?? EmojiArt()
+            
+            //manage emojiart
+            let fetchRequestEmojiArt : NSFetchRequest<EmojiArt_> = EmojiArt_.fetchRequest()
+            fetchRequestEmojiArt.predicate = NSPredicate(format: "id == %@", id.uuidString)
+            let emojiArtItems = try! context.fetch(fetchRequestEmojiArt)
+            
+            if emojiArtItems.count==0 {
+                let emojiArt_ = EmojiArt_(context: context)
+                emojiArt_.backgroundURL = URL(string: "")
+                emojiArt_.id = id.uuidString
+                emojiArt = EmojiArt(id_: id.uuidString)
                 
-            emojiArtCancellable = $emojiArt.sink { emojiArt in
-                    print("json = \(emojiArt.json?.utf8 ?? "nil")")
-                    UserDefaults.standard.set(emojiArt.json, forKey: defaultsKey)
+                do{try context.save()}
+                catch{
+                    print("failed to save")
+                }
+                item.emojiArt = emojiArt_
             }
+            else{
+                emojiArt = EmojiArt(id_: emojiArtItems.first?.id! ?? "")
+                emojiArt.backgroundURL = emojiArtItems.first?.backgroundURL
+            }
+            
             fetchBackgroundImageData()
             
             
@@ -73,17 +87,33 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
             self.alpha = 1
             self.color = Color(red: 1, green: 1, blue: 1)
             self.timeInDocument = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
-                    
-            let defaultsKey = "EmojiArtDocument.\(id.uuidString)"
-            emojiArt = EmojiArt(json: UserDefaults.standard.data(forKey: defaultsKey)) ?? EmojiArt()
+                   
+            //manage emojiart
+            let fetchRequestEmojiArt : NSFetchRequest<EmojiArt_> = EmojiArt_.fetchRequest()
+            fetchRequestEmojiArt.predicate = NSPredicate(format: "id == %@", id.uuidString)
+            let emojiArtItems = try! context.fetch(fetchRequestEmojiArt)
+            
+            if emojiArtItems.count==0 {
+                let emojiArt_ = EmojiArt_(context: context)
+                emojiArt_.backgroundURL = URL(string: "")
+                emojiArt_.id = id.uuidString
+                emojiArt = EmojiArt(id_: id.uuidString)
                 
-            emojiArtCancellable = $emojiArt.sink { emojiArt in
-                    print("json = \(emojiArt.json?.utf8 ?? "nil")")
-                    UserDefaults.standard.set(emojiArt.json, forKey: defaultsKey)
+                do{try context.save()}
+                catch{
+                    print("failed to save")
+                }
+                //item.emojiArt = emojiArt_
             }
+            else{
+                emojiArt = EmojiArt(id_: emojiArtItems.first?.id! ?? "")
+                emojiArt.backgroundURL = emojiArtItems.first?.backgroundURL
+            }
+            
             fetchBackgroundImageData()
             
         }
+        
         
         //self.id = id
         
@@ -181,6 +211,21 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
         }
         set {
             emojiArt.backgroundURL = newValue?.imageURL
+            
+            //manage emojiart
+            let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+            let fetchRequestEmojiArt : NSFetchRequest<EmojiArt_> = EmojiArt_.fetchRequest()
+            fetchRequestEmojiArt.predicate = NSPredicate(format: "id == %@", id.uuidString)
+            let emojiArtItems = try! context.fetch(fetchRequestEmojiArt)
+            
+            let emojiArt_ = emojiArtItems.first!
+            emojiArt_.backgroundURL = newValue?.imageURL
+                
+            do{try context.save()}
+            catch{
+                print("failed to save")
+            }
+            
             fetchBackgroundImageData()
         }
     }
