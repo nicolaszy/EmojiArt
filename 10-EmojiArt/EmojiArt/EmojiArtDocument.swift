@@ -132,6 +132,7 @@ class EmojiArtDocument: ObservableObject, Hashable, Equatable, Identifiable {
                     
                 }
     }
+    
     func changeAlpha(_ a: Double){
         alpha = a
         
