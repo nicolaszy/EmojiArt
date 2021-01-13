@@ -21,9 +21,14 @@
         <attribute name="timeInDocument" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="emojiArt" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EmojiArt_"/>
     </entity>
+    <entity name="Palette_" representedClassName="Palette_" syncable="YES" codeGenerationType="class">
+        <attribute name="content" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+    </entity>
     <elements>
         <element name="Emoji_" positionX="-99.0328369140625" positionY="227.6521606445312" width="128" height="118"/>
         <element name="EmojiArt_" positionX="-100.0381469726562" positionY="104.1591339111328" width="128" height="74"/>
         <element name="EmojiArtDocument_" positionX="-107.5245361328125" positionY="-112.0064849853516" width="128" height="134"/>
+        <element name="Palette_" positionX="-90" positionY="45" width="128" height="59"/>
     </elements>
 </model>

@@ -1,4 +1,6 @@
 import Foundation
+import SwiftUI
+import CoreData
 
 extension EmojiArtDocument {
     private static let palettesPersistenceKey = "EmojiArtDocument.PalettesKey"
@@ -11,11 +13,79 @@ extension EmojiArtDocument {
 
     private(set) var paletteNames: [String: String] {
         get {
-            UserDefaults.standard.object(forKey: EmojiArtDocument.palettesPersistenceKey) as? [String: String]
-                ?? EmojiArtDocument.defaultPalettes
+            var palettes: [String: String] = [:]
+            let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+            do{
+                let fetchRequest : NSFetchRequest<Palette_> = Palette_.fetchRequest()
+                let items = try context.fetch(fetchRequest)
+                if(items.count==0){
+                    print("no items so far")
+                    //TODO: Standarditems anlegen
+                    for item in EmojiArtDocument.defaultPalettes{
+                        print(item.value) //name
+                        print(item.key) //emojis
+                        
+                        let palette = Palette_(context: context)
+                        palette.name = item.value
+                        palette.content = item.key
+                        
+                        palettes[item.key] = item.value
+                    }
+                    //save data
+                    do{try context.save()}
+                    catch{
+                        print("failed to save")
+                    }
+                }
+                else{
+                    
+                    print("items found")
+                    for item in items{
+                        print(item.name!)
+                        print(item.content!)
+                        palettes[item.content!] = item.name!
+                    }
+                }
+            }
+            catch{
+                
+                
+            }
+            return palettes
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: EmojiArtDocument.palettesPersistenceKey)
+            let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+            do{
+                let fetchRequest : NSFetchRequest<Palette_> = Palette_.fetchRequest()
+                let items = try context.fetch(fetchRequest)
+                    print("no items so far")
+                    //TODO: Standarditems anlegen
+                    for item in newValue{
+                        print(item.value) //name
+                        print(item.key) //emojis
+                        
+                        //only create new palette if name doesn't exist...
+                        let fetchRequestDetailed : NSFetchRequest<Palette_> = Palette_.fetchRequest()
+                        fetchRequestDetailed.predicate = NSPredicate(format: "name == %@", String(item.value))
+                        let items_ = try context.fetch(fetchRequestDetailed)
+                        
+                        if(items_.count==0){
+                            let palette = Palette_(context: context)
+                            palette.name = item.value
+                            palette.content = item.key
+                        }
+                        else{
+                            //update item
+                            items_.first?.content = item.key
+                        }
+                    }
+                    //save data
+                    do{try context.save()}
+                    catch{
+                        print("failed to save")
+                    }
+            }
+            catch{}
             objectWillChange.send()
         }
     }
