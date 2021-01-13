@@ -23,17 +23,39 @@ class EmojiArtDocumentChooserTest: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
+    func testEditName() throws {
         // UI tests must launch the application that they test.
         let app = XCUIApplication()
         app.launch()
+        app.buttons["plus"].tap()
         app.buttons["Edit"].tap()
         let element = app.tables.cells.element(boundBy: 0)
+        
         element.tap()
-        element.typeText("test")
         
+        let titleInBeginning = "Untitled" // Titel der automatisch gesetzt wird
+        print("beginning")
+        print(element.label)
         
-        // Use recording to get started writing UI tests.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        for _ in "Untitled"{
+            app.keys["Löschen"].tap()
+        }
+        
+        app.keys["T"].tap()
+
+        app.keys["e"].tap()
+
+        app.keys["s"].tap()
+
+        app.keys["t"].tap()
+        
+        app.buttons["Done"].tap()
+        
+        print("end")
+        print(titleInBeginning)
+        print(element.label)
+        
+        assert(element.label != titleInBeginning)
+        
     }
 }
