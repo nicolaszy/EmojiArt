@@ -4,7 +4,7 @@ struct EmojiArtDocumentChooser: View {
     @ObservedObject var store: EmojiArtDocumentStore
     @State private var editMode = EditMode.inactive
     @State private var gridMode = false
-    //@State private var didChangeZoomFactor = false
+    @State private var didChangeZoomFactor = false
 
     var body: some View {
         print(self.editMode)
@@ -15,7 +15,7 @@ struct EmojiArtDocumentChooser: View {
                     GeometryReader { geometry in
                         NavigationLink(destination: EmojiArtDocumentView(document: document)){
                             ZStack {
-                                //Text(didChangeZoomFactor.description).font(.system(size: 0.000000000001))
+                                Text(didChangeZoomFactor.description).font(.system(size: 0.000000000001))
                                 document.color.opacity(document.alpha).overlay(
                                     OptionalImage(uiImage: document.backgroundImage)
                                         .scaleEffect(document.steadyStateZoomScale)
@@ -32,8 +32,8 @@ struct EmojiArtDocumentChooser: View {
                         }
                         }
                     }.onAppear{
-                        //self.didChangeZoomFactor = true
-                        //self.didChangeZoomFactor = false
+                        self.didChangeZoomFactor = true
+                        self.didChangeZoomFactor = false
                     }
                 }
                 .navigationBarTitle(self.store.name)
