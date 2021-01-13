@@ -4,7 +4,7 @@ struct EmojiArtDocumentChooser: View {
     @ObservedObject var store: EmojiArtDocumentStore
     @State private var editMode = EditMode.inactive
     @State private var gridMode = false
-    @State private var didChangeZoomFactor = false
+    //@State private var didChangeZoomFactor = false
 
     var body: some View {
         print(self.editMode)
@@ -15,7 +15,7 @@ struct EmojiArtDocumentChooser: View {
                     GeometryReader { geometry in
                         NavigationLink(destination: EmojiArtDocumentView(document: document)){
                             ZStack {
-                                Text(didChangeZoomFactor.description).font(.system(size: 0.000000000001))
+                                //Text(didChangeZoomFactor.description).font(.system(size: 0.000000000001))
                                 document.color.opacity(document.alpha).overlay(
                                     OptionalImage(uiImage: document.backgroundImage)
                                         .scaleEffect(document.steadyStateZoomScale)
@@ -26,14 +26,14 @@ struct EmojiArtDocumentChooser: View {
                                 }
                                     ForEach(document.emojis) { emoji in
                                         Text(emoji.text)
-                                            .font(animatableWithSize: emoji.fontSize * document.steadyStateZoomScale * gestureZoomScale)
+                                            .font(animatableWithSize: emoji.fontSize * document.steadyStateZoomScale)
                                             .position(self.position(for: emoji, in: geometry.size, document: document))
                                 }
                         }
                         }
                     }.onAppear{
-                        self.didChangeZoomFactor = true
-                        self.didChangeZoomFactor = false
+                        //self.didChangeZoomFactor = true
+                        //self.didChangeZoomFactor = false
                     }
                 }
                 .navigationBarTitle(self.store.name)
@@ -99,8 +99,8 @@ struct EmojiArtDocumentChooser: View {
     }
     private func position(for emoji: EmojiArt.Emoji, in size: CGSize, document: EmojiArtDocument) -> CGPoint {
         var location = emoji.location
-        let zoomScale = document.steadyStateZoomScale * gestureZoomScale
-        let panOffset = (document.steadyStatePanOffset + gesturePanOffset) * zoomScale
+        let zoomScale = document.steadyStateZoomScale
+        let panOffset = (document.steadyStatePanOffset) * zoomScale
         location = CGPoint(x: location.x * zoomScale, y: location.y * zoomScale)
         location = CGPoint(x: location.x + size.width/2, y: location.y + size.height/2)
         location = CGPoint(x: location.x + panOffset.width, y: location.y + panOffset.height)
@@ -114,6 +114,4 @@ struct EmojiArtDocumentChooser: View {
             document.steadyStateZoomScale = min(hZoom, vZoom)
         }
     }
-    @GestureState private var gestureZoomScale: CGFloat = 0.30 //TODO: set right value
-    @GestureState private var gesturePanOffset: CGSize = .zero
 }
