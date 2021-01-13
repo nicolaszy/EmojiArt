@@ -55,7 +55,8 @@ class EmojiArtDocumentChooserTest: XCTestCase {
         print(titleInBeginning)
         print(element.label)
         
-        assert(element.label != titleInBeginning)
-        
+        assert(element.label != titleInBeginning) //check that label no longer has the initial value "Untitled"
+        assert(element.label=="Test") //check that label now says test
+
     }
 }
