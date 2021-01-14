@@ -6,10 +6,12 @@
         <attribute name="text" optional="YES" attributeType="String"/>
         <attribute name="x" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="y" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="emojiArt" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EmojiArt_" inverseName="emoji" inverseEntity="EmojiArt_"/>
     </entity>
     <entity name="EmojiArt_" representedClassName="EmojiArt_" syncable="YES" codeGenerationType="class">
         <attribute name="backgroundURL" optional="YES" attributeType="URI"/>
-        <relationship name="emoji" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Emoji_"/>
+        <relationship name="emoji" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Emoji_" inverseName="emojiArt" inverseEntity="Emoji_"/>
+        <relationship name="emojiArtDocument" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EmojiArtDocument_" inverseName="emojiArt" inverseEntity="EmojiArtDocument_"/>
     </entity>
     <entity name="EmojiArtDocument_" representedClassName="EmojiArtDocument_" syncable="YES" codeGenerationType="class">
         <attribute name="alpha" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
@@ -18,11 +20,11 @@
         <attribute name="colorR" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="timeInDocument" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="emojiArt" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EmojiArt_"/>
+        <relationship name="emojiArt" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EmojiArt_" inverseName="emojiArtDocument" inverseEntity="EmojiArt_"/>
     </entity>
     <elements>
-        <element name="Emoji_" positionX="-99.0328369140625" positionY="227.6521606445312" width="128" height="118"/>
-        <element name="EmojiArt_" positionX="-100.0381469726562" positionY="104.1591339111328" width="128" height="73"/>
+        <element name="Emoji_" positionX="-99.0328369140625" positionY="227.6521606445312" width="128" height="119"/>
+        <element name="EmojiArt_" positionX="-100.0381469726562" positionY="104.1591339111328" width="128" height="74"/>
         <element name="EmojiArtDocument_" positionX="-107.5245361328125" positionY="-112.0064849853516" width="128" height="134"/>
     </elements>
 </model>
