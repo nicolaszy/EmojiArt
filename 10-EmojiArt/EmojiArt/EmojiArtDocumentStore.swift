@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import CoreData
+import SwiftUI
 
 class EmojiArtDocumentStore: ObservableObject {
     private static let persistenceKeyPrefix = "EmojiArtDocumentStore"
@@ -25,11 +26,61 @@ class EmojiArtDocumentStore: ObservableObject {
     }
 
     func addDocument(named name: String = "Untitled") {
-        documentNames[EmojiArtDocument()] = name
+        let newDoc = EmojiArtDocument()
+        
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        do{
+            let fetchRequest : NSFetchRequest<EmojiArtDocument_> = EmojiArtDocument_.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "id == %@", newDoc.id.uuidString)
+            let items = try context.fetch(fetchRequest)
+            let newDocumentCoreData = items.first
+            let documentName = EmojiArtDocumentNames_(context: context)
+            documentName.name = name
+            documentName.emojiArtDocument = newDocumentCoreData
+            //save data
+            do{try context.save()}
+            catch{
+                print("failed to save")
+            }
+            
+        }
+        catch{
+            
+        }
+        documentNames[newDoc] = name
     }
 
     func removeDocument(_ document: EmojiArtDocument) {
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        //delete document name
+        do{
+            let fetchRequest : NSFetchRequest<EmojiArtDocumentNames_> = EmojiArtDocumentNames_.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "name == %@", documentNames[document] as! CVarArg)
+            let items = try context.fetch(fetchRequest)
+            context.delete(items.first!)
+            do{try context.save()}
+            catch{
+                print("failed to save")
+            }
+        }
+        catch{}
         documentNames[document] = nil
+        
+        //delete actual document
+        do{
+            let fetchRequest : NSFetchRequest<EmojiArtDocument_> = EmojiArtDocument_.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "id == %@", document.id.uuidString)
+            let items = try context.fetch(fetchRequest)
+            context.delete(items.first!)
+            do{try context.save()}
+            catch{
+                print("failed to save")
+            }
+        }
+        catch{
+            print("crash")
+        }
+        
     }
 
     private var autosave: AnyCancellable?
@@ -37,10 +88,47 @@ class EmojiArtDocumentStore: ObservableObject {
     init(named name: String = "Emoji Art") {
         self.name = name
         let defaultsKey = "\(EmojiArtDocumentStore.persistenceKeyPrefix).\(name)"
-        documentNames = Dictionary(fromPropertyList: UserDefaults.standard.object(forKey: defaultsKey))
-        autosave = $documentNames.sink { names in
-            UserDefaults.standard.set(names.asPropertyList, forKey: defaultsKey)
+        
+        //load document names with core data
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        do{
+            let fetchRequest : NSFetchRequest<EmojiArtDocumentNames_> = EmojiArtDocumentNames_.fetchRequest()
+            let items = try context.fetch(fetchRequest)
+            for item in items{
+                documentNames[EmojiArtDocument(id: UUID(uuidString: String(item.emojiArtDocument!.id!)) ?? UUID())] = item.name
+            }
         }
+        catch{}
+        
+        
+        //autosave documents in core data
+        autosave = $documentNames.sink { names in
+            for name in names{
+                do{
+                    let fetchRequest : NSFetchRequest<EmojiArtDocumentNames_> = EmojiArtDocumentNames_.fetchRequest()
+                    fetchRequest.predicate = NSPredicate(format: "name == %@", name.value)
+                    let items = try context.fetch(fetchRequest)
+                    let documentName = items.first
+                    documentName?.name = name.value
+                    
+                    //get the EmojiArtDocument_ for name.key
+                    let fetchRequest2 : NSFetchRequest<EmojiArtDocument_> = EmojiArtDocument_.fetchRequest()
+                    fetchRequest2.predicate = NSPredicate(format: "id == %@", name.key.id.uuidString)
+                    let itemsEmojiArtDocument = try context.fetch(fetchRequest2)
+                    
+                    //set the value
+                    documentName?.emojiArtDocument = itemsEmojiArtDocument.first
+                    //save data
+                    do{try context.save()}
+                    catch{
+                        print("failed to save")
+                    }
+                }
+                catch{}
+                
+            }
+        }
+
     }
 }
 
