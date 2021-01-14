@@ -39,7 +39,7 @@ class EmojiArtTest: XCTestCase {
         let prevId = emojiArtDocument.emojis.first(where: { $0.text=="😊" })?.id
         emojiArtDocument.addEmoji("😄", at: CGPoint(x: 10, y: 10), size: 1000)
         let thisId = emojiArtDocument.emojis.first(where: { $0.text=="😄" })?.id
-        assert(prevId!+1==thisId!)
+        XCTAssertTrue(prevId!+1==thisId!)
     }
 
     func testExample() throws {

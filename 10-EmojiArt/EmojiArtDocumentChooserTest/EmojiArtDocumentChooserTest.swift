@@ -53,8 +53,12 @@ class EmojiArtDocumentChooserTest: XCTestCase {
         print(titleInBeginning)
         print(element.label)
         
-        assert(element.label != titleInBeginning) //check that label no longer has the initial value "Untitled"
-        assert(element.label=="Test") //check that label now says test
+        XCTAssertTrue(element.label != titleInBeginning) //check that label no longer has the initial value "Untitled"
+        XCTAssertTrue(element.label=="Test") //check that label now says test
+        
+        //let's make a second test verifying that indeed the renamed cell exists:
+        let renamedCell = app.tables.cells["Test"]
+        XCTAssertTrue(renamedCell.exists)
 
     }
 }
