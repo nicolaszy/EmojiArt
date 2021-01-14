@@ -33,7 +33,7 @@ class EmojiArtDocumentChooserTest: XCTestCase {
         
         element.tap()
         
-        let titleInBeginning = "Untitled" // Titel der automatisch gesetzt wird 
+        let titleInBeginning = "Untitled" // Titel der automatisch gesetzt wird
         
         for _ in "Untitled"{
             app.keys["Löschen"].tap()
@@ -62,3 +62,5 @@ class EmojiArtDocumentChooserTest: XCTestCase {
 
     }
 }
+
+

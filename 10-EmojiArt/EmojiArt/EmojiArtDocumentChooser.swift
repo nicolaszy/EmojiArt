@@ -50,8 +50,11 @@ struct EmojiArtDocumentChooser: View {
                             }, label: {
                                 Image(systemName: "square.grid.2x2.fill").imageScale(.large)
                         })}
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
                         EditButton()
-                    }}                
+                    }
+                }
             }
             else{
             List {
@@ -84,8 +87,11 @@ struct EmojiArtDocumentChooser: View {
                         }, label: {
                             Image(systemName: "square.grid.2x2").imageScale(.large)
                         })}
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
                     EditButton()
-                }}
+                }
+            }
             .environment(\.editMode, $editMode)
         }
         }
