@@ -27,12 +27,12 @@ struct EmojiArtDocumentChooser: View {
                                             .font(animatableWithSize: emoji.fontSize * document.steadyStateZoomScale)
                                             .position(self.position(for: emoji, in: geometry.size, document: document))
                                 }
-                        }
+                            }
                         }
                     }.onAppear{
                         self.didChangeZoomFactor = true
                         self.didChangeZoomFactor = false
-                    }
+                    }.clipShape(Rectangle())
                 }
                 .navigationBarTitle(self.store.name)
                 .toolbar{
