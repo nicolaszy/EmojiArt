@@ -7,8 +7,6 @@ struct EmojiArtDocumentChooser: View {
     @State private var didChangeZoomFactor = false
 
     var body: some View {
-        print(self.editMode)
-        
         return NavigationView {
             if(gridMode){
                 Grid(store.documents) { document in
