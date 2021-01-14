@@ -37,35 +37,30 @@ struct EmojiArtDocumentChooser: View {
                     }
                 }
                 .navigationBarTitle(self.store.name)
-                .toolbar(content: {
-                    
-                    HStack{
-                        Button(action: {
-                            self.store.addDocument()
-                        }, label: {
-                            Image(systemName: "plus").imageScale(.large)
-                        })
-                        Button(action: {
-                            gridMode = !gridMode
-                        }, label: {
-
-                            Image(systemName: "square.grid.2x2.fill").imageScale(.large)
-                            
-                    })}
-                    EditButton()
-                })
-                
+                .toolbar{
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        HStack{
+                            Button(action: {
+                                self.store.addDocument()
+                            }, label: {
+                                Image(systemName: "plus").imageScale(.large)
+                            })
+                            Button(action: {
+                                gridMode = !gridMode
+                            }, label: {
+                                Image(systemName: "square.grid.2x2.fill").imageScale(.large)
+                        })}
+                        EditButton()
+                    }}                
             }
             else{
             List {
                 ForEach(store.documents) { document in
-                    
                         NavigationLink(destination: EmojiArtDocumentView(document: document).navigationBarTitle(self.store.name(for: document))) {
                             EditableText(self.store.name(for: document), isEditing: self.editMode.isEditing) { name in
                                 self.store.setName(name, for: document)
                             }
                         }
-                    
                 }
                 .onDelete(perform: { indexSet in
                     indexSet
@@ -76,24 +71,21 @@ struct EmojiArtDocumentChooser: View {
                 })
             }
             .navigationBarTitle(self.store.name)
-            .toolbar(content: {
-                
-                HStack{
-                    Button(action: {
-                        self.store.addDocument()
-                    }, label: {
-                        Image(systemName: "plus").imageScale(.large)
-                    })
-                    Button(action: {
-                        gridMode = !gridMode
-                    }, label: {
-
-                        Image(systemName: "square.grid.2x2").imageScale(.large)
-                        
-                    })}
-                EditButton()
-            })
-            
+            .toolbar{
+                ToolbarItem(placement: .navigationBarLeading) {
+                    HStack{
+                        Button(action: {
+                            self.store.addDocument()
+                        }, label: {
+                            Image(systemName: "plus").imageScale(.large)
+                        })
+                        Button(action: {
+                            gridMode = !gridMode
+                        }, label: {
+                            Image(systemName: "square.grid.2x2").imageScale(.large)
+                        })}
+                    EditButton()
+                }}
             .environment(\.editMode, $editMode)
         }
         }
