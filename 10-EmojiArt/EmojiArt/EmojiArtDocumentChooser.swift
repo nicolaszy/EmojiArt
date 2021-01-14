@@ -37,8 +37,8 @@ struct EmojiArtDocumentChooser: View {
                     }
                 }
                 .navigationBarTitle(self.store.name)
-                .navigationBarItems(
-                    leading:
+                .toolbar(content: {
+                    
                     HStack{
                         Button(action: {
                             self.store.addDocument()
@@ -51,9 +51,10 @@ struct EmojiArtDocumentChooser: View {
 
                             Image(systemName: "square.grid.2x2.fill").imageScale(.large)
                             
-                    })},
-                    trailing: EditButton()
-                )
+                    })}
+                    EditButton()
+                })
+                
             }
             else{
             List {
@@ -75,8 +76,8 @@ struct EmojiArtDocumentChooser: View {
                 })
             }
             .navigationBarTitle(self.store.name)
-            .navigationBarItems(
-                leading:
+            .toolbar(content: {
+                
                 HStack{
                     Button(action: {
                         self.store.addDocument()
@@ -86,12 +87,12 @@ struct EmojiArtDocumentChooser: View {
                     Button(action: {
                         gridMode = !gridMode
                     }, label: {
+
+                        Image(systemName: "square.grid.2x2").imageScale(.large)
                         
-                            Image(systemName: "square.grid.2x2").imageScale(.large)
-                        
-                })},
-                trailing: EditButton()
-            )
+                    })}
+                EditButton()
+            })
             
             .environment(\.editMode, $editMode)
         }
